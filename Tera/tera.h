@@ -40,6 +40,7 @@ union	AnalogBitsUnionDef					// Struct of 64bits used to pack analog tone and si
 //
 //
 //---------------------------------------------------------------------------------------------------------------------------------------------------
+/*
 struct FuncBitsDef
 {
 	BYTE	Pad1 : 6;						// Assumed spare as all dialog fields have been tracked down.
@@ -76,6 +77,49 @@ union FuncBitsUnionDef
 	WORD	Bits;
 	FuncBitsDef	FuncBits;
 };
+*/
+
+struct FuncBitsDef
+{
+	//--------------------------12312 ---------------------------------------------
+	BYTE AnalogWide : 1;			// 
+	BYTE PowerHigh : 1;				//
+	BYTE : 1;						//
+	BYTE : 1;						//
+	//--------------------------12313 ---------------------------------------------
+	BYTE UseTimeSlot2 : 1;			// 1 = Timeslot 2
+	BYTE RXOnly: 1;					// 1 = RX Only
+	BYTE Digital : 1;				// 1 = Digital mode, 0 = Analog
+	BYTE : 1;
+	//--------------------------12314 ---------------------------------------------
+	BYTE:8	;
+
+	//--------------------------12315 ---------------------------------------------
+	BYTE : 8;
+
+	//--------------------------12316 ---------------------------------------------
+	BYTE : 8;
+
+	//--------------------------12317 ---------------------------------------------
+	BYTE AdmitMethod : 2;			// 0 = Always, 1 = Chan Free, 3 = CCF
+	BYTE : 6;
+	//--------------------------12318 ---------------------------------------------
+	BYTE : 8;
+
+	//--------------------------12319 ---------------------------------------------
+	BYTE : 8;
+
+	//--------------------------12320 ---------------------------------------------
+	BYTE : 8;
+
+
+};
+
+union FuncBitsUnionDef
+{
+	BYTE		Bits[9];
+	FuncBitsDef	FuncBits;
+};
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------
 // Tera Channels - - Offset 14224
@@ -83,12 +127,34 @@ union FuncBitsUnionDef
 //
 //
 //
-#define	CHANNEL_START	14224
+#define	CHANNEL_START	12304
 #define CHANNEL_MAX		CHANNEL_START + (CHANNEL_SIZE * CHANNEL_SLOTS)
-#define	CHANNEL_SIZE	56
+#define	CHANNEL_SIZE	48
 #define CHANNEL_SLOTS	128	
 //---------------------------------------------------------------------------------------------------------------------------------------------------
 struct TeraChannel
+{
+	BYTE	m_szRXFreq[4];							// 12304
+	BYTE	m_szTXFreq[4];							// 12308
+	FuncBitsUnionDef	FuncBitsUnion;				// 12312-12313 see union def
+
+	BYTE	RXGroup;								// 12321
+	BYTE	Pad1;									// 12322
+
+	BYTE	cbRXTone[2];							// 12323-12324  Tone of 151.4 is stored in two bytes 14 15 
+	BYTE	cbTXTone[2];							// 12325-12326	
+
+	BYTE	Pad2[3];								// 12327-12329
+
+	DBYTE	TalkAround;								// 12330
+
+
+};
+
+
+
+
+struct oldTeraChannel
 {
 
 	BYTE	m_szChannelName[15];					// unused positions are 0xff filled
