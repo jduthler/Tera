@@ -86,38 +86,52 @@ struct FuncBitsDef
 	BYTE PowerHigh : 1;				//
 	BYTE : 1;						//
 	BYTE : 1;						//
-	//--------------------------12313 ---------------------------------------------
 	BYTE UseTimeSlot2 : 1;			// 1 = Timeslot 2
 	BYTE RXOnly: 1;					// 1 = RX Only
 	BYTE Digital : 1;				// 1 = Digital mode, 0 = Analog
 	BYTE : 1;
+	//--------------------------12313 ---------------------------------------------
+	BYTE Pad1: 8;
 	//--------------------------12314 ---------------------------------------------
-	BYTE:8	;
-
+	BYTE Pad2: 8;
 	//--------------------------12315 ---------------------------------------------
-	BYTE : 8;
-
+	BYTE Pad3: 8;
 	//--------------------------12316 ---------------------------------------------
-	BYTE : 8;
-
+	BYTE Pad13 : 8;
 	//--------------------------12317 ---------------------------------------------
+	BYTE : 1;
 	BYTE AdmitMethod : 2;			// 0 = Always, 1 = Chan Free, 3 = CCF
-	BYTE : 6;
+	BYTE : 5;
 	//--------------------------12318 ---------------------------------------------
-	BYTE : 8;
-
+	BYTE ColorCode : 4;
+	BYTE Pad4: 4;
 	//--------------------------12319 ---------------------------------------------
-	BYTE : 8;
-
+	BYTE Pad5: 8;
 	//--------------------------12320 ---------------------------------------------
-	BYTE : 8;
+	BYTE Pad6 : 8;
+	//--------------------------12321 ---------------------------------------------
+	BYTE RXGroup :8;			// 1 - 32
+	//--------------------------12322 ---------------------------------------------
+	BYTE Pad7: 8;				// Unknown
+	//--------------------------12323 - 12324 -------------------------------------
+	BYTE cbRXTone[2];		// Tone of 151.4 is stored in two bytes 14 15 
+	//--------------------------12325 - 12326 -------------------------------------
+	BYTE cbTXTone[2];		//	
+	//--------------------------12327 - 12239 -------------------------------------
+	BYTE Pad8[3];			// 12327-12329
+	//--------------------------12330 ---------------------------------------------
+	BYTE : 4;
+	BYTE TalkAround : 1;	// 0 = Enable talk around
+	BYTE : 3;
+	//--------------------------12331 ---------------------------------------------
+	BYTE Pad9: 8;
 
 
 };
 
 union FuncBitsUnionDef
 {
-	BYTE		Bits[9];
+	BYTE		Bits[20];
 	FuncBitsDef	FuncBits;
 };
 
@@ -127,36 +141,32 @@ union FuncBitsUnionDef
 //
 //
 //
-#define	CHANNEL_START	12304
-#define CHANNEL_MAX		CHANNEL_START + (CHANNEL_SIZE * CHANNEL_SLOTS)
-#define	CHANNEL_SIZE	48
-#define CHANNEL_SLOTS	128	
+#define	CHANNEL_DETAIL_START	12304
+#define CHANNEL_DETAIL_MAX		CHANNEL_DETAIL_START + (CHANNEL_DETAIL_SIZE * CHANNEL_DETAIL_SLOTS)
+#define CHANNEL_DETAIL_READSIZE (CHANNEL_DETAIL_SIZE * CHANNEL_DETAIL_SLOTS)
+#define	CHANNEL_DETAIL_SIZE	48
+#define CHANNEL_DETAIL_SLOTS	128	
 //---------------------------------------------------------------------------------------------------------------------------------------------------
 struct TeraChannel
 {
 	BYTE	m_szRXFreq[4];							// 12304
 	BYTE	m_szTXFreq[4];							// 12308
 	FuncBitsUnionDef	FuncBitsUnion;				// 12312-12313 see union def
-
-	BYTE	RXGroup;								// 12321
-	BYTE	Pad1;									// 12322
-
-	BYTE	cbRXTone[2];							// 12323-12324  Tone of 151.4 is stored in two bytes 14 15 
-	BYTE	cbTXTone[2];							// 12325-12326	
-
-	BYTE	Pad2[3];								// 12327-12329
-
-	DBYTE	TalkAround;								// 12330
-
-
 };
+#define	CHANNEL_NAME_START	16384
+#define CHANNEL_NAME_MAX		CHANNEL_DETAIL_START + (CHANNEL_DETAIL_SIZE * CHANNEL_DETAIL_SLOTS)
+#define CHANNEL_NAME_READSIZE (CHANNEL_DETAIL_SIZE * CHANNEL_DETAIL_SLOTS)
+#define	CHANNEL_NAME_SIZE	11
+#define CHANNEL_NAME_SLOTS	690						// This is a guess <TODO>
 
 
+#define	CHANNEL_COUNT_START	12288
+
+DBYTE	NumChannels;								// 12288 - Number of defined channels
 
 
 struct oldTeraChannel
 {
-
 	BYTE	m_szChannelName[15];					// unused positions are 0xff filled
 	BYTE	cChannelNameTerminator;					// always 0xff
 	BYTE	m_szRXFreq[4];
